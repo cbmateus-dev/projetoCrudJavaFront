@@ -22,12 +22,10 @@ $(document).ready(function () {
     })
     //Regras que só pode digitar número
     $("#VALORPRODUTO").on("keypress", function () {
-
         onlynumber();
     });
 
     $(document).on("keypress", "[name^='VALORPRODUTOTBL']", function () {
-
         onlynumber();
     });
     //Botão Deletar Produto
@@ -41,15 +39,12 @@ $(document).ready(function () {
         $element.parents('tr').find('td:not(:last-child)').find('input').show()
         $element.parents('tr').find('td:last-child').find('button[name="saveButtonLinha"]').show()
         $element.parents('tr').find('td:last-child').find('button[name="editButton"]').hide()
-
     })
     //Botão Salvar Produto
     $(document).on('click', "button[name='saveButtonLinha']", function () {
         var $element = $(this)
         var idLinha = $element.parents('tr').attr('id')
-
         editar(idLinha)
-
     })
     //Função Metodo GET listar Produtos
     function listar() {
@@ -59,9 +54,7 @@ $(document).ready(function () {
         xhttp.send();
         xhttp.onload = function () {
             listaProdutos = this.responseText;
-
             listaProdutos = JSON.parse(listaProdutos);
-            console.log(listaProdutos)
 
             produtos = "";
 
@@ -84,15 +77,13 @@ $(document).ready(function () {
                 <button type="button" class="btn btn-success" name="saveButtonLinha" style="display:none;">Salvar</button>
                 
                 </td></tr>`
-
             }
             $('#lista').append(produtos);
         }
     }
     //Função Metodo POST Adicionar Produtos
     function gravar() {
-        //alert("Estamos dentro da function incluir");
-
+        
         var produto = {}
         produto.nome = $("#NOMEPRODUTO").val()
         produto.descricao = $("#DESCPRODUTO").val()
@@ -111,13 +102,11 @@ $(document).ready(function () {
     }
     //Função metodo PUT Editar Produtos
     function editar(id) {
-        console.log(id)
         var produto = {}
         produto.id = id
         produto.nome = $("#NOMEPRODUTOTBL" + id).val()
         produto.descricao = $("#DESCPRODUTOTBL" + id).val()
         produto.valor = $("#VALORPRODUTOTBL" + id).val()
-
 
         xhttp.open("PUT", api);
         xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
@@ -125,7 +114,6 @@ $(document).ready(function () {
         xhttp.onload = function () {
             listar();
         }
-
     }
     //Função metodo DELETE deletar produtos
     function deletar(id) {
