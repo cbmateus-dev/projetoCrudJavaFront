@@ -48,58 +48,88 @@ $(document).ready(function () {
     })
     //Função Metodo GET listar Produtos
     function listar() {
-        xhttp = new XMLHttpRequest();
         $("#lista tr").remove()
-        xhttp.open("GET", api);
-        xhttp.send();
-        xhttp.onload = function () {
-            listaProdutos = this.responseText;
-            listaProdutos = JSON.parse(listaProdutos);
+        try {
+            $.ajax({
+                url: `https://cbmateus-dev.herokuapp.com/api/produtos/`,
+                type: 'GET',
+                contentType: 'application/json; charset=UTF-8',
+                data: {},
+                dataType: 'json',
+                success: function (data, textStatus, jqXHR) { // tipos de dados: Anything, String, jqXHR
+                    listaProdutos = data
 
-            produtos = "";
+                    console.info('SUCESSO: resposta do ajax: ', data, textStatus, jqXHR);
+                    produtos = "";
 
-            for (const u of listaProdutos) {
-                produtos += `<tr id="${u.id}">
-                <td> ${u.nome}
-                <input type="text" class="form-control" placeholder="Nome Produto" name="NOMEPRODUTOTBL" 
-                id="NOMEPRODUTOTBL${u.id}" style="display:none;" value="${u.nome}"></td>
+                    for (const u of listaProdutos) {
+                        produtos += `<tr id="${u.id}">
+                        <td> ${u.nome}
+                        <input type="text" class="form-control" placeholder="Nome Produto" name="NOMEPRODUTOTBL" 
+                        id="NOMEPRODUTOTBL${u.id}" style="display:none;" value="${u.nome}"></td>
+        
+                        <td>${u.descricao}
+                        <input type="text" class="form-control" placeholder="Descrição Produto" name="DESCPRODUTOTBL"
+                        id="DESCPRODUTOTBL${u.id}" style="display:none;" value="${u.descricao}"></td>
+        
+                        <td>R$ ${u.valor}<input type="text" class="form-control" placeholder="R$" name="VALORPRODUTOTBL"
+                        id="VALORPRODUTOTBL${u.id}" style="display:none;" value="${u.valor}"></td>
+        
+                        <td class="form-group"><button type="button" class="btn btn-danger" name="deleteButton">Deletar</button>
+                        <button type="button" class="btn btn-warning" name="editButton">Editar</button>
+                        
+                        <button type="button" class="btn btn-success" name="saveButtonLinha" style="display:none;">Salvar</button>
+                        
+                        </td></tr>`
+                    }
+                    $('#lista').append(produtos);
 
-                <td>${u.descricao}
-                <input type="text" class="form-control" placeholder="Descrição Produto" name="DESCPRODUTOTBL"
-                id="DESCPRODUTOTBL${u.id}" style="display:none;" value="${u.descricao}"></td>
+                },
+                error: function (jqXHR, textStatus, errorThrown) { // tipos de dados: jqXHR, String, String
+                    listar();
+                    console.error('Resposta do ajax: ', jqXHR, textStatus, errorThrown);
 
-                <td>${u.valor}<input type="text" class="form-control" placeholder="R$" name="VALORPRODUTOTBL"
-                id="VALORPRODUTOTBL${u.id}" style="display:none;" value="${u.valor}"></td>
-
-                <td class="form-group"><button type="button" class="btn btn-danger" name="deleteButton">Deletar</button>
-                <button type="button" class="btn btn-warning" name="editButton">Editar</button>
-                
-                <button type="button" class="btn btn-success" name="saveButtonLinha" style="display:none;">Salvar</button>
-                
-                </td></tr>`
-            }
-            $('#lista').append(produtos);
+                },
+            });
         }
+        catch (e) {
+            console.error('API retornou um erro:', e);
+            listar();
+        }
+
     }
     //Função Metodo POST Adicionar Produtos
     function gravar() {
-        
+
         var produto = {}
         produto.nome = $("#NOMEPRODUTO").val()
         produto.descricao = $("#DESCPRODUTO").val()
         produto.valor = $("#VALORPRODUTO").val()
 
-        xhttp.open("POST", api);
-        xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-        xhttp.send(JSON.stringify(produto));
-        xhttp.onload = function () {
+        try {
+            $.ajax({
+                url: `https://cbmateus-dev.herokuapp.com/api/produtos/`,
+                type: 'POST',
+                contentType: 'application/json; charset=UTF-8',
+                data: JSON.stringify(produto),
+                dataType: 'json',
+                success: function (data, textStatus, jqXHR) { // tipos de dados: Anything, String, jqXHR
+                    console.info('SUCESSO: resposta do ajax: ', data, textStatus, jqXHR);
+                    listar();
+                },
+                error: function (jqXHR, textStatus, errorThrown) { // tipos de dados: jqXHR, String, String
+                    listar();
+                    console.error('Resposta do ajax: ', jqXHR, textStatus, errorThrown);
+                },
+            });
+        }
+        catch (e) {
+            console.error('API retornou um erro:', e);
             listar();
         }
-        $("#NOMEPRODUTO").val('')
-        $("#DESCPRODUTO").val('')
-        $("#VALORPRODUTO").val('')
 
     }
+
     //Função metodo PUT Editar Produtos
     function editar(id) {
         var produto = {}
@@ -108,19 +138,50 @@ $(document).ready(function () {
         produto.descricao = $("#DESCPRODUTOTBL" + id).val()
         produto.valor = $("#VALORPRODUTOTBL" + id).val()
 
-        xhttp.open("PUT", api);
-        xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-        xhttp.send(JSON.stringify(produto));
-        xhttp.onload = function () {
+        try {
+            $.ajax({
+                url: `https://cbmateus-dev.herokuapp.com/api/produtos/`,
+                type: 'PUT',
+                contentType: 'application/json; charset=UTF-8',
+                data: JSON.stringify(produto),
+                dataType: 'json',
+                success: function (data, textStatus, jqXHR) { // tipos de dados: Anything, String, jqXHR
+
+                    console.info('SUCESSO: resposta do ajax: ', data, textStatus, jqXHR);
+                    listar();
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) { // tipos de dados: jqXHR, String, String
+                    listar();
+                    console.error('Resposta do ajax: ', jqXHR, textStatus, errorThrown);
+
+                },
+            });
+        }
+        catch (e) {
+            console.error('API retornou um erro:', e);
             listar();
         }
     }
     //Função metodo DELETE deletar produtos
     function deletar(id) {
-        xhttp.open("DELETE", api + id);
-        xhttp.send();
-        xhttp.onload = function () {
-            alert(this.responseText);
+        try {
+            $.ajax({
+                url: `https://cbmateus-dev.herokuapp.com/api/produtos/${id}`,
+                type: 'DELETE',
+                contentType: 'application/json; charset=UTF-8',
+                success: function (data, textStatus, jqXHR) { // tipos de dados: Anything, String, jqXHR
+                    console.info('SUCESSO: resposta do ajax: ', data, textStatus, jqXHR);
+                    listar();
+                },
+                error: function (jqXHR, textStatus, errorThrown) { // tipos de dados: jqXHR, String, String
+                    listar();
+                    console.error('Resposta do ajax: ', jqXHR, textStatus, errorThrown);
+                },
+            });
+        }
+        catch (e) {
+            console.error('API retornou um erro:', e);
             listar();
         }
     }
